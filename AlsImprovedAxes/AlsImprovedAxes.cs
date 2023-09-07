@@ -21,12 +21,10 @@ namespace AlsImprovedAxes
     
     public class AlsImprovedAxesConfig
     {
-        public static ConfigEntry<float> SlashMultiplier { get; set; }
-        public static ConfigEntry<float> FlintSpiritDamage { get; set; }
-        public static ConfigEntry<float> BronzeFireDamage { get; set; }
-        public static ConfigEntry<float> IronSpiritDamage { get; set; }
-        public static ConfigEntry<float> BlackmetalFrostDamage { get; set; }
-        public static ConfigEntry<float> JotunBaneSlash { get; set; }
+        public static ConfigEntry<float> OneHSlashMultiplier { get; set; }
+        public static ConfigEntry<float> TwoHSlashMultiplier { get; set; }
+
+        public static ConfigEntry<float> CrystalBattleAxeSpirit { get; set; }
         public static ConfigEntry<float> JotunBanePoison { get; set; }
     }
 
@@ -37,12 +35,10 @@ namespace AlsImprovedAxes
         void Awake()
         {
             // Initialize config
-            AlsImprovedAxesConfig.SlashMultiplier = Config.Bind("General", "SlashMultiplier", 1.0f, "Slash damage multiplier for one-handed axes.");
-            AlsImprovedAxesConfig.FlintSpiritDamage = Config.Bind("General", "FlintSpiritDamage", 0f, "Spirit damage for flint axes.");
-            AlsImprovedAxesConfig.BronzeFireDamage = Config.Bind("General", "BronzeFireDamage", 0f, "Fire damage for bronze axes.");
-            AlsImprovedAxesConfig.IronSpiritDamage = Config.Bind("General", "IronSpiritDamage", 0f, "Spirit damage for iron axes.");
-            AlsImprovedAxesConfig.BlackmetalFrostDamage = Config.Bind("General", "BlackmetalFrostDamage", 0f, "Frost damage for blackmetal axes.");
-            AlsImprovedAxesConfig.JotunBaneSlash = Config.Bind("General", "JotunBaneSlash", 0f, "Additional slash damage for jotun bane axes.");
+            AlsImprovedAxesConfig.OneHSlashMultiplier = Config.Bind("General", "OneHSlashMultiplier", 1.0f, "Slash damage multiplier for one-handed axes.");
+            AlsImprovedAxesConfig.TwoHSlashMultiplier = Config.Bind("General", "TwoHSlashMultiplier", 1.0f, "Slash damage multiplier for two-handed axes.");
+
+            AlsImprovedAxesConfig.CrystalBattleAxeSpirit = Config.Bind("General", "CrystalBattleAxeSpirit", 30f, "Override spirit damage for crystal battleaxe.");
             AlsImprovedAxesConfig.JotunBanePoison = Config.Bind("General", "JotunBanePoison", 40f, "Override poison damage for jotun bane axes.");
 
             Harmony harmony = new Harmony(PluginInfo.Guid);
@@ -68,33 +64,29 @@ namespace AlsImprovedAxes
                     if (itemDrop == null)
                         continue;
 
-                    // Check if the item is a one-handed axe
-                    if (itemDrop.m_itemData.m_shared.m_name.StartsWith("$item_axe"))
+                    // Check if the item is a one-handed axe or battleaxe
+                    if (itemDrop.m_itemData.m_shared.m_name.StartsWith("$item_axe") || itemDrop.m_itemData.m_shared.m_name.StartsWith("$item_battleaxe"))
                     {
                         Debug.Log($"Modifying weapon data for {itemDrop.m_itemData.m_shared.m_name}");
 
-                        // Modify the weapon's damage values here
-                        itemDrop.m_itemData.m_shared.m_damages.m_slash *= AlsImprovedAxesConfig.SlashMultiplier.Value;
+                        bool isOneHanded = itemDrop.m_itemData.m_shared.m_name.StartsWith("$item_axe");
 
-                        if (itemDrop.m_itemData.m_shared.m_name.Contains("flint"))
+                        // Modify the weapon's damage values here
+                        if (isOneHanded)
                         {
-                            itemDrop.m_itemData.m_shared.m_damages.m_spirit = AlsImprovedAxesConfig.FlintSpiritDamage.Value;
+                            itemDrop.m_itemData.m_shared.m_damages.m_slash *= AlsImprovedAxesConfig.OneHSlashMultiplier.Value;
                         }
-                        else if (itemDrop.m_itemData.m_shared.m_name.Contains("bronze"))
+                        else
                         {
-                            itemDrop.m_itemData.m_shared.m_damages.m_fire = AlsImprovedAxesConfig.BronzeFireDamage.Value;
+                            itemDrop.m_itemData.m_shared.m_damages.m_slash *= AlsImprovedAxesConfig.TwoHSlashMultiplier.Value;
                         }
-                        else if (itemDrop.m_itemData.m_shared.m_name.Contains("iron"))
+
+                        if (itemDrop.m_itemData.m_shared.m_name.Contains("crystal"))
                         {
-                            itemDrop.m_itemData.m_shared.m_damages.m_spirit = AlsImprovedAxesConfig.IronSpiritDamage.Value;
-                        }
-                        else if (itemDrop.m_itemData.m_shared.m_name.Contains("blackmetal"))
-                        {
-                            itemDrop.m_itemData.m_shared.m_damages.m_frost = AlsImprovedAxesConfig.BlackmetalFrostDamage.Value;
+                            itemDrop.m_itemData.m_shared.m_damages.m_spirit = AlsImprovedAxesConfig.CrystalBattleAxeSpirit.Value;
                         }
                         else if (itemDrop.m_itemData.m_shared.m_name.Contains("jotunbane"))
                         {
-                            itemDrop.m_itemData.m_shared.m_damages.m_slash += AlsImprovedAxesConfig.JotunBaneSlash.Value;
                             itemDrop.m_itemData.m_shared.m_damages.m_poison = AlsImprovedAxesConfig.JotunBanePoison.Value;
                         }
                     }
