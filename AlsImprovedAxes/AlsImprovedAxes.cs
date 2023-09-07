@@ -22,6 +22,7 @@ namespace AlsImprovedAxes
     public class AlsImprovedAxesConfig
     {
         public static ConfigEntry<float> SlashMultiplier { get; set; }
+        public static ConfigEntry<float> FlintSpiritDamage { get; set; }
         public static ConfigEntry<float> BronzeFireDamage { get; set; }
         public static ConfigEntry<float> IronSpiritDamage { get; set; }
         public static ConfigEntry<float> BlackmetalFrostDamage { get; set; }
@@ -37,6 +38,7 @@ namespace AlsImprovedAxes
         {
             // Initialize config
             AlsImprovedAxesConfig.SlashMultiplier = Config.Bind("General", "SlashMultiplier", 1.0f, "Slash damage multiplier for one-handed axes.");
+            AlsImprovedAxesConfig.FlintSpiritDamage = Config.Bind("General", "FlintSpiritDamage", 0f, "Spirit damage for flint axes.");
             AlsImprovedAxesConfig.BronzeFireDamage = Config.Bind("General", "BronzeFireDamage", 0f, "Fire damage for bronze axes.");
             AlsImprovedAxesConfig.IronSpiritDamage = Config.Bind("General", "IronSpiritDamage", 0f, "Spirit damage for iron axes.");
             AlsImprovedAxesConfig.BlackmetalFrostDamage = Config.Bind("General", "BlackmetalFrostDamage", 0f, "Frost damage for blackmetal axes.");
@@ -74,7 +76,11 @@ namespace AlsImprovedAxes
                         // Modify the weapon's damage values here
                         itemDrop.m_itemData.m_shared.m_damages.m_slash *= AlsImprovedAxesConfig.SlashMultiplier.Value;
 
-                        if (itemDrop.m_itemData.m_shared.m_name.Contains("bronze"))
+                        if (itemDrop.m_itemData.m_shared.m_name.Contains("flint"))
+                        {
+                            itemDrop.m_itemData.m_shared.m_damages.m_spirit = AlsImprovedAxesConfig.FlintSpiritDamage.Value;
+                        }
+                        else if (itemDrop.m_itemData.m_shared.m_name.Contains("bronze"))
                         {
                             itemDrop.m_itemData.m_shared.m_damages.m_fire = AlsImprovedAxesConfig.BronzeFireDamage.Value;
                         }
