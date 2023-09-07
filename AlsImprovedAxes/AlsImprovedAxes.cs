@@ -15,7 +15,7 @@ namespace AlsImprovedAxes
     public class PluginInfo
     {
         public const string Name = "Al's Improved Axes";
-        public const string Guid = "deadcliffdivers.AlsImprovedAxes";
+        public const string Guid = "beardedkwan.AlsImprovedAxes";
         public const string Version = "1.0.0";
     }
     
